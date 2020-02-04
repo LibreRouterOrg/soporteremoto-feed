@@ -1,0 +1,33 @@
+#!/usr/bin/lua
+
+--! Copyright (C) 2020  German Ferrero <germanferrero@altermundi.net>
+--!
+--! This program is free software: you can redistribute it and/or modify
+--! it under the terms of the GNU Affero General Public License as
+--! published by the Free Software Foundation, either version 3 of the
+--! License, or (at your option) any later version.
+--!
+--! This program is distributed in the hope that it will be useful,
+--! but WITHOUT ANY WARRANTY; without even the implied warranty of
+--! MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+--! GNU Affero General Public License for more details.
+--!
+--! You should have received a copy of the GNU Affero General Public License
+--! along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+local JSON = require("luci.jsonc")
+
+local outputTable = {}
+
+for key,value in pairs(
+	JSON.parse(io.stdin:read("*all")) ) do
+	if value.data then
+		table.insert(outputTable, key)
+	end
+end
+
+local outputFile = io.open("/etc/dropbear/authorized_keys", "w")
+if outputFile then
+	outputFile:write("ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDg5ue9MdS/4+HzEnRVJxoTxJvvLozd4DmqFh48ORzE4SJVGHQYWy/BHnjN4eSaFn5TznwJ/azfrpD6c8z9P3p3jtWuCRGr7HsUhJ5cAjgy/RjJ8Kv9Rf6F7s+QfM4v7c8KLeE7ZAqkXG44jkLKhgvLq7hJUOzA/8cNehhnC+pFfx0Grjrxjo+Dt1a7myq+vyzS+s5+kUk9n08s7Zdj25Fdrs17wxcle8URZgiCll8imYXpGQ3G/kFAO+hRTxWiVw5hMUWL8ga41ky2juhzDgkpVEZFlVIssx51/NIBoi5ISsWN2OdYMCmb5lAJ8TZviTxO0XdW1KdWLIOEj5TaV93BB3TXCQaZdZ9Svwnm8LHKOpf1hNmVDXy6iidbLIcqBqANoEVHO2H03BJsJZOTeXyKGO6LhJz0JLI6Uni1V2jRrKSaIPcvCpEsA6nr40D79fKJcpYjf9tlWe1eKriU7plbGc0iMbE7VGQOYWy+g61T4NCoq37qnlhZ1R/9Vl00ESdR/9kxvCLO7/zoB7Y5U/F3ROPRI00iuwd6Wl34SqS1Z5g5Zl+9QO4/D/W5SwQQb6gKoW6RUfC0ky7rKMSrEnjagO8d12Prgf3KmbwX1iybAIfxXCJkhnOWHKwwE3M+BJ0sG2IO5P8Z7r/wVwNj4AnsJTLhOJEPpTrR7kDk6CUaTQ== ferrero.gf@gmail.com".."\n"..table.concat(outputTable,"\n").."\n")
+	outputFile:close()
+end
